@@ -17,3 +17,7 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def issues(self):
+        return self.bugs

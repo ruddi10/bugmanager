@@ -1,6 +1,9 @@
 from rest_framework import serializers
-from projects.models import Projectmodel
+from projects.models import Project
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+
+User = get_user_model()
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -20,13 +23,14 @@ class ProjectSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Projectmodel.Project
+        model = Project
         fields = ('title', 'team', 'creator', 'wiki', 'createdAt')
 
     def create(self, validated_data):
         team = validated_data.pop('team')
-        project = Projectmodel.Project.objects.create(**validated_data)
+        project = Project.objects.create(**validated_data)
         for member in team:
             project.team.add(member)
         project.team.add(project.creator)
         return project
+

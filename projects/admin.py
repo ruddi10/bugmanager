@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import Projectmodel
+from .models import Project, Issue, IssueAssign
 # Register your models here.
-admin.site.register(Projectmodel.Project)
+admin.site.register(Project)
+admin.site.register(Issue)
+admin.site.register(IssueAssign)
 
 
 # class ProjectAdmin(admin.ModelAdmin):

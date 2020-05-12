@@ -19,7 +19,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('id', 'title', 'team', 'creator', 'wiki', 'createdAt')
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'creator')
 
     def create(self, validated_data):
         team = validated_data.pop('team')
@@ -38,18 +38,10 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
         slug_field='username',
 
     )
-    issues = IssueSerializer(many=True, read_only=True)
+    bugs = IssueSerializer(many=True, read_only=True)
 
     class Meta:
         model = Project
         fields = ('id', 'title', 'team', 'creator',
-                  'wiki', 'createdAt', 'issues')
-        read_only_fields = ('id',)
-
-    def create(self, validated_data):
-        team = validated_data.pop('team')
-        project = Project.objects.create(**validated_data)
-        for member in team:
-            project.team.add(member)
-        project.team.add(project.creator)
-        return project
+                  'wiki', 'createdAt', 'bugs')
+        read_only_fields = ('id', 'creator', 'createdAt')

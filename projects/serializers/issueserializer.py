@@ -30,6 +30,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class IssueSerializer(serializers.ModelSerializer):
     reporter = serializers.ReadOnlyField(source='reporter.username')
+    assigned_by = UserSerializer(read_only=True)
+    assigned_to = UserSerializer(read_only=True)
    # assigned = AssignSerializer(read_only=True)
     tags = serializers.SlugRelatedField(
         many=True,
@@ -42,7 +44,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = ('issue_id', 'heading', 'reporter', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt',
+        fields = ('issue_id', 'heading', 'reporter', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt', 'project',
                   'description', 'tags', 'status')
         read_only_fields = ('assigned_to', 'assignedAt',
                             'assigned_by', 'reporter', 'status', 'updatedAt')
@@ -57,7 +59,9 @@ class IssueSerializer(serializers.ModelSerializer):
 
 class IssueUpdateSerializer(serializers.ModelSerializer):
     reporter = serializers.ReadOnlyField(source='reporter.username')
-    comments = CommentSerializer(many=True, read_only=True)
+    comment = CommentSerializer(many=True, read_only=True)
+    # assigned_by = UserSerializer()
+    # assigned_to = UserSerializer()
     tags = serializers.SlugRelatedField(
         many=True,
         queryset=Tag.objects.all(),
@@ -65,11 +69,20 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
 
     )
 
-   # assigned = AssignSerializer()
+    def validate(self, data):
+        if (self.context['request'].method == 'PATCH' or self.context['request'].method == 'PUT'):
+            if(self.context['request'].user.is_staff or self.context['request'].user.team.filter(id=self.instance.project.id)):
+
+                return data
+            if(data.get('assigned_by', None) or data.get('assigned_to', None)):
+                raise serializers.ValidationError("Not Allowed")
+            return data
+
+        return data
 
     class Meta:
         model = Issue
-        fields = ('project', 'heading', 'reporter', 'comments', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt',
+        fields = ('project', 'heading', 'reporter', 'comment', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt',
                   'description', 'tags', 'status')
         read_only_fields = ('heading', 'reporter',
                             'description', 'project', 'updatedAt')

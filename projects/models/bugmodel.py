@@ -41,9 +41,9 @@ class Issue(models.Model):
     def __str__(self):
         return self.heading
 
-    @property
-    def comments(self):
-        if(self.comment):
-            return self.comment
-        else:
-            return "Not Assigned yet"
+    # @property
+    # def comments(self):
+    #     if(self.comment):
+    #         return self.comment
+    #     else:
+    #         return "Not Assigned yet"

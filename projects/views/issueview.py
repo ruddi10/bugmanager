@@ -6,8 +6,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import permissions
 # Create your views here.
 from projects.models import Issue
-from projects.serializers import issueserializer
+from projects.serializers import issueserializer, commentserializer
 from rest_framework import generics
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
 
 
 # class IssueList(generics.ListCreateAPIView):
@@ -42,3 +45,13 @@ class IssueView(viewsets.ModelViewSet):
         context = super(IssueView, self).get_serializer_context()
         context.update({"request": self.request})
         return context
+
+    # @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    # def add_comment(self, request, pk=None):
+    #     request.data['issue'] = self.get_object().id
+    #     request.data['commented_by'] = request.user.username
+    #     serializer = commentserializer.CommentSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

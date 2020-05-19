@@ -8,10 +8,10 @@ from projects.constants import *
 User = get_user_model()
 
 
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('id', 'username')
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username')
 
 
 class CommentSerializer(serializers.ModelSerializer):

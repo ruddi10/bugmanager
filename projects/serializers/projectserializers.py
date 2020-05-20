@@ -13,6 +13,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         many=True,
         queryset=User.objects.all(),
         slug_field='username',
+        required=False
 
     )
 
@@ -22,7 +23,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'creator')
 
     def create(self, validated_data):
-        team = validated_data.pop('team')
+        try:
+            team = validated_data.pop('team')
+        except KeyError:
+            project = Project.objects.create(**validated_data)
+            project.team.add(project.creator)
+            return project
+
         project = Project.objects.create(**validated_data)
         for member in team:
             project.team.add(member)

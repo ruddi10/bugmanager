@@ -14,6 +14,8 @@ class Profile(models.Model):
         User, on_delete=models.CASCADE, related_name="profile")
     enrolment_number = models.CharField(max_length=15, unique=True)
     access_token = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
 
     def __str__(self):
         return self.enrolment_number

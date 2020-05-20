@@ -1,11 +1,10 @@
-from rest_framework_jwt.settings import api_settings
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
-from django.utils import timezone
-expire = api_settings.JWT_EXPIRATION_DELTA
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
 
-
-def jwt_response_payload_handler(token, user=None, request=None):
     return {
-        'token': token,
-        'expire': timezone.now()+expire}
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }

@@ -3,9 +3,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 class StatusCode(models.TextChoices):
-    PENDING = 'P', _('Pending')
-    TBD = 'TBD', _('To-Be-Disscussed')
-    RESOLVED = 'R', _('Resolved')
+    PENDING = 'Pending', _('Pending')
+    TBD = 'To Be Disscussed', _('To-Be-Disscussed')
+    RESOLVED = 'Resolved', _('Resolved')
+    IP = 'In Process', _('In Process')
 
 
 Client_ID = 'bJJ0mJGuqBJRfU45hBECxOFO6XkvqD3HuuMAajB4'

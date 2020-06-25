@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from projects.models import Issue, Tag, Comment
+from projects.models import Issue, Tag, Comment, Profile
 from rest_framework import serializers, fields
 from projects.constants import *
 from .commentserializer import CommentSerializer
@@ -8,11 +8,18 @@ from .commentserializer import CommentSerializer
 User = get_user_model()
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+
 class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+
     class Meta:
         model = User
-        fields = ('id', 'username')
-
+        fields = ('id', 'username', 'is_superuser', 'profile')
 
 # class CommentSerializer(serializers.ModelSerializer):
 #     # assigned_to = serializers.CharField(source='assigned_to.username')
@@ -34,6 +41,11 @@ class IssueSerializer(serializers.ModelSerializer):
     assigned_by = UserSerializer(read_only=True)
     assigned_to = UserSerializer(read_only=True)
    # assigned = AssignSerializer(read_only=True)
+    updatedAt = serializers.DateTimeField(format="%B %w,%Y", read_only=True)
+    createdAt = serializers.DateTimeField(format="%B %w,%Y", read_only=True)
+    assignedAt = serializers.DateTimeField(format="%B %w,%Y", read_only=True)
+    updateTime = serializers.DateTimeField(
+        format="%I:%M %p", source='updatedAt', read_only=True)
     tags = serializers.SlugRelatedField(
         many=True,
         queryset=Tag.objects.all(),
@@ -46,9 +58,9 @@ class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = ('issue_id', 'heading', 'reporter', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt', 'project',
-                  'description', 'tags', 'status')
+                  'description', 'tags', 'status', 'createdAt', 'updateTime')
         read_only_fields = ('assigned_to', 'assignedAt',
-                            'assigned_by', 'reporter', 'status', 'updatedAt')
+                            'assigned_by', 'reporter', 'status', 'updatedAt', 'createdAt')
     # def create(self, validated_data):
     #     team = validated_data.pop('team')
     #     project = Project.objects.create(**validated_data)

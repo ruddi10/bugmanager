@@ -18,7 +18,7 @@ class Issue(models.Model):
     createdAt = models.DateTimeField("Created At", default=timezone.now)
     tags = models.ManyToManyField(Tag, related_name="issues")
     status = models.CharField(
-        max_length=3, choices=StatusCode.choices, default=StatusCode.PENDING)
+        max_length=30, choices=StatusCode.choices, default=StatusCode.PENDING)
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="bugs")
 
@@ -35,6 +35,8 @@ class Issue(models.Model):
         related_name="issues_you_assigned")
     assignedAt = models.DateTimeField(
         "Assigned At", blank=True, null=True, default=timezone.now)
+    createdAt = models.DateTimeField(
+        "Updated At", blank=True, null=True, auto_now_add=True)
     updatedAt = models.DateTimeField(
         "Updated At", blank=True, null=True, auto_now=True)
 

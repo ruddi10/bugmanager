@@ -11,6 +11,8 @@ from rest_framework import generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 # class IssueList(generics.ListCreateAPIView):
@@ -31,6 +33,9 @@ from rest_framework import status
 class IssueView(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     permission_classes = [IsReporterTeamOrReadOnly, IsAuthenticated]
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    ordering_fields = ['createdAt']
+    filterset_fields = ['reporter', 'assigned_to']
 
     def get_serializer_class(self):
         if (self.action == 'list' or self.action == 'create'):

@@ -17,7 +17,7 @@ from projects.constants import Client_ID, Client_secret, Redirect_Url, Access_To
 from projects.models import Profile
 from django.contrib.auth import get_user_model
 from projects.utils import get_tokens_for_user
-
+from projects.permissions import IsOwnerOrReadOnly
 
 User = get_user_model()
 
@@ -25,7 +25,13 @@ User = get_user_model()
 class UserView(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
-
+    serializer_class = issueserializer.UserSerializer
+    @action(detail=True, methods=['post'], permission_classes=[IsOwnerOrReadOnly])
+    def change_handle(self, request, pk=None):
+        user = User.objects.get(id=pk)
+        user.username = request.data["username"]
+        user.save()
+        return Response("name changed", status=status.HTTP_205_RESET_CONTENT)
 
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def login(self, request, pk=None):
@@ -68,10 +74,12 @@ class UserView(viewsets.ReadOnlyModelViewSet):
             Profile.objects.create(
                 User=user, enrolment_number=user_data["student"]["enrolmentNumber"], access_token=r["access_token"], full_name=user_data["person"]["fullName"], email=user_data["contactInformation"]["emailAddress"])
             response = get_tokens_for_user(user)
+
             return Response(response, status=status.HTTP_201_CREATED)
         profile.access_token = r["access_token"]
         profile.full_name = user_data["person"]["fullName"]
         profile.email = user_data["contactInformation"]["emailAddress"]
+        profile.save()
         user = profile.User
         response = get_tokens_for_user(user)
         return Response(response, status=status.HTTP_202_ACCEPTED)

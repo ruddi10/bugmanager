@@ -41,9 +41,9 @@ class IssueSerializer(serializers.ModelSerializer):
     assigned_by = UserSerializer(read_only=True)
     assigned_to = UserSerializer(read_only=True)
    # assigned = AssignSerializer(read_only=True)
-    updatedAt = serializers.DateTimeField(format="%B %w,%Y", read_only=True)
-    createdAt = serializers.DateTimeField(format="%B %w,%Y", read_only=True)
-    assignedAt = serializers.DateTimeField(format="%B %w,%Y", read_only=True)
+    updatedAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
+    createdAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
+    assignedAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
     updateTime = serializers.DateTimeField(
         format="%I:%M %p", source='updatedAt', read_only=True)
     tags = serializers.SlugRelatedField(

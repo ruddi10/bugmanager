@@ -14,6 +14,7 @@ class Project(models.Model):
     team = models.ManyToManyField(User, blank=True, related_name="team")
     wiki = RichTextField(blank=True)
     createdAt = models.DateTimeField("Created At", default=timezone.now)
+    is_deployed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

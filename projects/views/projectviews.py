@@ -36,7 +36,7 @@ class ProjectView(viewsets.ModelViewSet):
     pagination_class = LargeResultsSetPagination
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     ordering_fields = ['createdAt', 'title', 'creator']
-    filterset_fields = ['creator']
+    filterset_fields = ['creator', 'is_deployed', 'createdAt']
 
     def get_serializer_class(self):
         if (self.action == 'list' or self.action == 'create'):

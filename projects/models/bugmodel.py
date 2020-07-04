@@ -21,7 +21,8 @@ class Issue(models.Model):
         max_length=30, choices=StatusCode.choices, default=StatusCode.PENDING)
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="bugs")
-
+    priority = models.CharField(
+        max_length=30, choices=Priority.choices, default=Priority.MODERATE)
     assigned_to = models.ForeignKey(
         User, models.SET_NULL,
         blank=True,
@@ -42,6 +43,9 @@ class Issue(models.Model):
 
     def __str__(self):
         return self.heading
+
+    def get_project(self):
+        return {"id": self.project.id, "title": self.project.title}
 
     # @property
     # def comments(self):

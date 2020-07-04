@@ -58,9 +58,9 @@ class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = ('issue_id', 'heading', 'reporter', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt', 'project',
-                  'description', 'tags', 'status', 'createdAt', 'updateTime')
+                  'description', 'tags', 'status', 'createdAt', 'updateTime', 'priority', 'get_project')
         read_only_fields = ('assigned_to', 'assignedAt',
-                            'assigned_by', 'reporter', 'status', 'updatedAt', 'createdAt')
+                            'assigned_by', 'reporter', 'status', 'updatedAt', 'createdAt', 'get_project')
     # def create(self, validated_data):
     #     team = validated_data.pop('team')
     #     project = Project.objects.create(**validated_data)
@@ -120,6 +120,6 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = ('project', 'heading', 'reporter', 'comment', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt',
-                  'description', 'tags', 'status')
+                  'description', 'tags', 'status', 'priority')
         read_only_fields = ('heading', 'reporter',
                             'description', 'project', 'updatedAt', 'assignedAt')

@@ -22,3 +22,11 @@ class Project(models.Model):
     # @property
     # def issues(self):
     #     return self.bugs
+    def team_list(self):
+        return (list(map(lambda x: {'id': x.id, 'username': x.username}, self.team.all())))
+
+    def get_creator(self):
+        return {"id": self.creator.id, "name": self.creator.username}
+
+    def total_bugs(self):
+        return self.bugs.all().count()

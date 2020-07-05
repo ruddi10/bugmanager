@@ -16,6 +16,11 @@ class Profile(models.Model):
     access_token = models.CharField(max_length=100)
     full_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    is_disabled = models.BooleanField(default=False)
+    # profilepic = models.ImageField(
+    #     default="guest-user.jpg", null=True, blank=True)
+    profilepic = models.TextField(
+        default="http://localhost:8000/images/guest-user.jpg")
 
     def __str__(self):
         return self.enrolment_number

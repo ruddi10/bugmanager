@@ -34,7 +34,7 @@ class IssueView(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     permission_classes = [IsReporterTeamOrReadOnly, IsAuthenticated]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
-    ordering_fields = ['createdAt']
+    ordering_fields = ['createdAt', 'updatedAt', 'heading']
     filterset_fields = ['reporter', 'assigned_to', 'tags']
 
     def get_serializer_class(self):

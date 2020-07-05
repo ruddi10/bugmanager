@@ -23,10 +23,10 @@ class Project(models.Model):
     # def issues(self):
     #     return self.bugs
     def team_list(self):
-        return (list(map(lambda x: {'id': x.id, 'username': x.username}, self.team.all())))
+        return (list(map(lambda x: {'id': x.id, 'username': x.username, 'profilepic': x.profile.profilepic}, self.team.all())))
 
     def get_creator(self):
-        return {"id": self.creator.id, "name": self.creator.username}
+        return {"id": self.creator.id, "name": self.creator.username, }
 
     def total_bugs(self):
         return self.bugs.all().count()

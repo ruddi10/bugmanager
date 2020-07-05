@@ -4,6 +4,7 @@ from projects.permissions import IsReporterTeamOrReadOnly
 from rest_framework.permissions import IsAuthenticated, AllowAny
 import requests
 import json
+from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 from rest_framework import permissions
 # Create your views here.
@@ -18,14 +19,25 @@ from projects.models import Profile
 from django.contrib.auth import get_user_model
 from projects.utils import get_tokens_for_user
 from projects.permissions import IsOwnerOrReadOnly
+from rest_framework import filters
+from django.core.files import File
+import urllib.request
+import os.path
 
 User = get_user_model()
+
+
+class MediumSetPagination(PageNumberPagination):
+    page_size = 10
 
 
 class UserView(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = issueserializer.UserSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['username']
+    pagination_class = MediumSetPagination
     @action(detail=True, methods=['post'], permission_classes=[IsOwnerOrReadOnly])
     def change_handle(self, request, pk=None):
         user = User.objects.get(id=pk)
@@ -67,12 +79,23 @@ class UserView(viewsets.ReadOnlyModelViewSet):
         try:
             profile = Profile.objects.get(
                 enrolment_number=user_data["student"]["enrolmentNumber"])
+            if(profile.is_disabled):
+                return Response("You are disabled", status=status.HTTP_403_FORBIDDEN)
         except Profile.DoesNotExist:
             username = f'{user_data["person"]["fullName"].split()[0]}_{user_data["userId"]}'
             user = User.objects.create(
                 username=username)
-            Profile.objects.create(
+            p = Profile.objects.create(
                 User=user, enrolment_number=user_data["student"]["enrolmentNumber"], access_token=r["access_token"], full_name=user_data["person"]["fullName"], email=user_data["contactInformation"]["emailAddress"])
+            if(user_data["person"]["displayPicture"]):
+                # result = urllib.request.urlretrieve(
+                #     " https://internet.channeli.in/" + user_data["person"]["displayPicture"])
+                # p.profilepic.save(os.path.basename(
+                #     user_data["person"]["displayPicture"]), File(open(result[0], 'rb')))
+                p.profilepic = " https://internet.channeli.in/" + \
+                    user_data["person"]["displayPicture"]
+                p.save()
+
             response = get_tokens_for_user(user)
 
             return Response(response, status=status.HTTP_201_CREATED)
@@ -80,6 +103,19 @@ class UserView(viewsets.ReadOnlyModelViewSet):
         profile.full_name = user_data["person"]["fullName"]
         profile.email = user_data["contactInformation"]["emailAddress"]
         profile.save()
+        if(user_data["person"]["displayPicture"]):
+            # result = urllib.request.urlretrieve(
+            #     " https://internet.channeli.in/" + user_data["person"]["displayPicture"])
+            # profile.profilepic.save(os.path.basename(
+            #     user_data["person"]["displayPicture"]), File(open(result[0], 'rb')))
+            profile.profilepic = " https://internet.channeli.in/" + \
+                user_data["person"]["displayPicture"]
+            profile.save()
+
+        else:
+            profile.profilepic = "http://localhost:8000/images/guest-user.jpg"
+            profile.save()
+
         user = profile.User
         response = get_tokens_for_user(user)
         return Response(response, status=status.HTTP_202_ACCEPTED)

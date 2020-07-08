@@ -25,7 +25,8 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('bugmanager/', include("projects.urls")),
-    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('ckeditor/', include('ckeditor_uploader.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

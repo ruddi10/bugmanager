@@ -24,7 +24,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ('id', 'title', 'team', 'creator',
                   'wiki', 'createdAt', 'is_deployed', 'team_list', 'get_creator')
-        read_only_fields = ('id', 'creator', 'is_deployed',
+        read_only_fields = ('id', 'creator',
                             'team_list', 'get_creator')
 
     def create(self, validated_data):
@@ -51,7 +51,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
     # )
     bugs = serializers.SerializerMethodField('get_bugs')
-    createdAt = serializers.DateTimeField(format="%B %w,%Y", read_only=True)
+    createdAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
 
     class Meta:
         model = Project

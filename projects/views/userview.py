@@ -4,7 +4,7 @@ from projects.permissions import IsReporterTeamOrReadOnly
 from rest_framework.permissions import IsAuthenticated, AllowAny
 import requests
 import json
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import LimitOffsetPagination
 # Create your views here.
 from rest_framework import permissions
 # Create your views here.
@@ -27,8 +27,8 @@ import os.path
 User = get_user_model()
 
 
-class MediumSetPagination(PageNumberPagination):
-    page_size = 10
+# class MediumSetPagination(PageNumberPagination):
+#     page_size = 10
 
 
 class UserView(viewsets.ReadOnlyModelViewSet):
@@ -37,7 +37,7 @@ class UserView(viewsets.ReadOnlyModelViewSet):
     serializer_class = issueserializer.UserSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['username']
-    pagination_class = MediumSetPagination
+    pagination_class = LimitOffsetPagination
     @action(detail=True, methods=['post'], permission_classes=[IsOwnerOrReadOnly])
     def change_handle(self, request, pk=None):
         user = User.objects.get(id=pk)

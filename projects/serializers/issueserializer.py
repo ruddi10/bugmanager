@@ -41,6 +41,7 @@ class IssueSerializer(serializers.ModelSerializer):
     assigned_by = UserSerializer(read_only=True)
     assigned_to = UserSerializer(read_only=True)
    # assigned = AssignSerializer(read_only=True)
+    #description = serializers.SerializerMethodField()
     updatedAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
     createdAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
     assignedAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)

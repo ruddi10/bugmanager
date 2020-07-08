@@ -2,10 +2,13 @@ from django.db import models
 from django.contrib.auth import get_user_model
 #from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 from projects.models import Project
 from projects.constants import *
 from .tagsmodel import Tag
+
+
 User = get_user_model()
 
 
@@ -14,7 +17,7 @@ class Issue(models.Model):
     reporter = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reporter")
   #  team = models.ManyToManyField(User, blank=True, related_name="team")
-    description = RichTextField(blank=True)
+    description = RichTextUploadingField(blank=True)
     createdAt = models.DateTimeField("Created At", default=timezone.now)
     tags = models.ManyToManyField(Tag, related_name="issues")
     status = models.CharField(

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+from corsheaders.defaults import default_headers
 from datetime import timedelta
 import os
 
@@ -154,7 +155,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = [
     '*'
 ]
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),

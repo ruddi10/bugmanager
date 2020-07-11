@@ -1,11 +1,18 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from projects.models import Comment
+from projects.models import Comment, Image
 from rest_framework import serializers, fields
 from projects.constants import *
 
 
 User = get_user_model()
+
+
+class ImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Image
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):

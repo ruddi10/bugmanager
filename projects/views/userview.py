@@ -18,11 +18,12 @@ from projects.constants import Client_ID, Client_secret, Redirect_Url, Access_To
 from projects.models import Profile
 from django.contrib.auth import get_user_model
 from projects.utils import get_tokens_for_user
-from projects.permissions import IsOwnerOrReadOnly
+from projects.permissions import IsOwnerOrReadOnly, IsAdmin
 from rest_framework import filters
 from django.core.files import File
 import urllib.request
 import os.path
+from django.core.exceptions import ObjectDoesNotExist
 
 User = get_user_model()
 
@@ -38,6 +39,32 @@ class UserView(viewsets.ReadOnlyModelViewSet):
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['username']
     pagination_class = LimitOffsetPagination
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
+    def change_post(self, request, pk=None):
+        try:
+            user = User.objects.get(id=pk)
+        except ObjectDoesNotExist:
+            return Response("User doesnt exist", status=status.HTTP_400_BAD_REQUEST)
+        if(request.data['action'] == "promote"):
+            user.is_superuser = True
+        else:
+            user.is_superuser = False
+        user.save()
+        return Response("Status changed", status=status.HTTP_205_RESET_CONTENT)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
+    def disable(self, request, pk=None):
+        try:
+            user = User.objects.get(id=pk)
+        except ObjectDoesNotExist:
+            return Response("User doesnt exist", status=status.HTTP_400_BAD_REQUEST)
+        profile = Profile.objects.get(User=user)
+        profile.is_disabled = True
+        profile.save()
+        user.save()
+        return Response("Disabled User", status=status.HTTP_205_RESET_CONTENT)
+
     @action(detail=True, methods=['post'], permission_classes=[IsOwnerOrReadOnly])
     def change_handle(self, request, pk=None):
         user = User.objects.get(id=pk)

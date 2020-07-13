@@ -76,18 +76,20 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
     comment = CommentSerializer(many=True, read_only=True)
     # assigned_by = UserSerializer()
     # assigned_to = UserSerializer()
-    assigned_to = serializers.SlugRelatedField(
-        queryset=User.objects.all(),
-        slug_field='username',
+    updatedAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
+    createdAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
+    assignedAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
+    # assigned_to = serializers.SlugRelatedField(
+    #     queryset=User.objects.all(),
+    #     slug_field='username',
 
-    )
-    assigned_by = serializers.SlugRelatedField(
-        read_only=True,
-        # queryset=User.objects.all(),
-        slug_field='username',
+    # )
+    # assigned_by = serializers.SlugRelatedField(
+    #     read_only=True,
+    #     # queryset=User.objects.all(),
+    #     slug_field='username',
 
-
-    )
+    # )
     tags = serializers.SlugRelatedField(
         many=True,
         queryset=Tag.objects.all(),
@@ -97,23 +99,33 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if (self.context['request'].method == 'PATCH' or self.context['request'].method == 'PUT'):
-            if(self.context['request'].user.is_staff or self.context['request'].user.team.filter(id=self.instance.project.id)):
+
+            if(self.context['request'].user.is_superuser or self.context['request'].user.team.filter(id=self.instance.project.id)):
                 if(self.instance.assigned_to):
                     if(data.get('assigned_to', None)):
                         if(data.get('assigned_to') == self.instance.assigned_to):
                             return data
-                        if(self.context['request'].user.is_staff or self.context['request'].user == self.instance.assigned_by or self.context['request'].user == self.instance.project.creator):
+                        if(self.context['request'].user.is_superuser or self.context['request'].user == self.instance.assigned_by):
+                            if(not data['assigned_to'].team.filter(id=self.instance.project.id)):
+                                raise serializers.ValidationError(
+                                    "Not a team member")
                             data['assigned_by'] = self.context['request'].user
                             return data
                         raise serializers.ValidationError("Already Assigned")
 
                     return data
                 if(data.get('assigned_to', None)):
+                    if(not data['assigned_to'].team.filter(id=self.instance.project.id)):
+                        raise serializers.ValidationError("Not a team member")
                     data['assigned_by'] = self.context['request'].user
                 return data
 
             if(data.get('assigned_by', None) or data.get('assigned_to', None)):
                 raise serializers.ValidationError("Not Allowed")
+
+            if(data.get('status', None)):
+                if(self.instance.status != data.get('status')):
+                    raise serializers.ValidationError("Not Allowed")
             return data
 
         return data
@@ -121,6 +133,6 @@ class IssueUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = ('project', 'heading', 'reporter', 'comment', 'assigned_by', "assigned_to", 'assignedAt', 'updatedAt',
-                  'description', 'tags', 'status', 'priority')
-        read_only_fields = ('heading', 'reporter',
-                            'description', 'project', 'updatedAt', 'assignedAt')
+                  'description', 'tags', 'status', 'priority', 'get_project', 'team_member', 'get_reporter', 'createdAt', 'assign_info')
+        read_only_fields = ('heading', 'reporter', 'tags', 'assigned_by',
+                            'description', 'project', 'updatedAt', 'assignedAt', 'get_project', 'team_member', 'get_reporter', 'createdAt', 'assign_info')

@@ -50,6 +50,18 @@ class Issue(models.Model):
     def get_project(self):
         return {"id": self.project.id, "title": self.project.title}
 
+    def get_reporter(self):
+        return {"id": self.reporter.id, "title": self.reporter.username}
+
+    def team_member(self):
+        return (list(map(lambda x: {"id": x.id, "name": x.username}, self.project.team.all())))
+
+    def assign_info(self):
+        if(self.assigned_to and self.assigned_by):
+            return {"assigned_to": {"id": self.assigned_to.id, "name": self.assigned_to.username}, "assigned_by": {"id": self.assigned_by.id, "name": self.assigned_by.username}}
+
+        else:
+            return {"assigned_to": None, "assigned_by": None}
     # @property
     # def comments(self):
     #     if(self.comment):

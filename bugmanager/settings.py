@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+from .credentials import *
 from corsheaders.defaults import default_headers
 from datetime import timedelta
 import os
@@ -171,3 +172,13 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 
 }
+
+# E-mail
+
+EMAIL_BACKEND = EMAIL_BACKEND
+EMAIL_HOST = EMAIL_HOST
+EMAIL_PORT = EMAIL_PORT
+EMAIL_HOST_USER = EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS = EMAIL_USE_TLS
+EMAIL_USE_SSL = EMAIL_USE_SSL

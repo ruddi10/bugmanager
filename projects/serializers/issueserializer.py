@@ -1,8 +1,11 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.conf import settings
 from projects.models import Issue, Tag, Comment, Profile
 from rest_framework import serializers, fields
 from projects.constants import *
+
 from .commentserializer import CommentSerializer
 from .userserializer import UserSerializer
 
@@ -43,6 +46,20 @@ class IssueSerializer(serializers.ModelSerializer):
     )
 
     issue_id = serializers.IntegerField(source='id', read_only=True)
+
+    def create(self, validated_data):
+        project = validated_data["project"]
+        team_member_list = project.team.all()
+        email_list = list(map(lambda x: x.profile.email, team_member_list))
+        send_mail(
+            'New Issue Reported',
+            self.context['request'].user.username +
+            ' reported a new issue in project : '+project.title,
+            settings.EMAIL_HOST_USER,
+            email_list,
+            fail_silently=True
+        )
+        return super().create(validated_data)
 
     class Meta:
         model = Issue

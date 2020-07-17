@@ -4,22 +4,10 @@ from projects.models import Issue, Tag, Comment, Profile
 from rest_framework import serializers, fields
 from projects.constants import *
 from .commentserializer import CommentSerializer
+from .userserializer import UserSerializer
 
 User = get_user_model()
 
-
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = '__all__'
-
-
-class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True)
-
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'is_superuser', 'profile')
 
 # class CommentSerializer(serializers.ModelSerializer):
 #     # assigned_to = serializers.CharField(source='assigned_to.username')

@@ -15,11 +15,6 @@ class Comment(models.Model):
   #  team = models.ManyToManyField(User, blank=True, related_name="team")
     description = RichTextField(blank=True)
     createdAt = models.DateTimeField("Created At", default=timezone.now)
-    mentions = models.ManyToManyField(
-        User,
-        blank=True,
-        null=True,
-        related_name="your_mentions")
   #  team = models.ManyToManyField(User, blank=True, related_name="team")
     commented_by = models.ForeignKey(
         User, on_delete=models.CASCADE,

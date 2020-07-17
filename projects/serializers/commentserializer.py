@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from projects.models import Comment, Image
 from rest_framework import serializers, fields
 from projects.constants import *
-
+from .userserializer import UserSerializer
 
 User = get_user_model()
 
@@ -15,36 +15,28 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username')
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ('id', 'username')
 
 
 class CommentSerializer(serializers.ModelSerializer):
     # assigned_to = serializers.CharField(source='assigned_to.username')
     # assigned_by = serializers.CharField(source='assigned_by.username')
-    mentions = serializers.SlugRelatedField(
-        many=True,
-        allow_null=True,
-        queryset=User.objects.all(),
-        slug_field='username',
-        required=False
-
-    )
     # commented_by = serializers.SlugRelatedField(
     #     queryset=User.objects.all(),
     #     slug_field='username',
 
     # )
     comment_id = serializers.IntegerField(source='id', read_only=True)
-    commented_by = serializers.CharField(
-        source="commented_by.username", read_only=True)
+    commented_by = UserSerializer(read_only=True)
+    createdAt = serializers.DateTimeField(format="%B %d,%Y", read_only=True)
 
     class Meta:
         model = Comment
         fields = ('issue', 'comment_id', 'description',
-                  'createdAt', 'commented_by', 'mentions')
+                  'createdAt', 'commented_by')
         read_only_fields = ('createdAt', 'comment_id')
 
     def validate_issue(self, value):

@@ -9,8 +9,6 @@ Bug Tracker is an app that aids in tracking bugs, issues, and questions in any a
 
 ## SETUP
 
----
-
 - Requirements
 
   - pip

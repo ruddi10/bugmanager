@@ -2,7 +2,7 @@
 
 Bug Tracker is an app that aids in tracking bugs, issues, and questions in any app development. It provides a collaborative environment for the team to solve the issues related to the project.
 
-**Built with**:
+**BUG MANAGER is built with**:
 
 - Django
 - Django Rest Framework
